@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pawer chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121b22;
+            margin: 0;
+            padding: 0;
+            color: white;
+        }
+
+        #chatbox {
+            width: 100%;
+            max-width: 700px;
+            height: 80vh;
+            margin: 0 auto;
+            background-color: #0d1418;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid #333;
+        }
+
+        #header {
+            padding: 10px;
+            background-color: #1f2c34;
+            display: flex;
+            align-items: center;
+        }
+
+        #header h1 {
+            font-size: 20px;
+            margin: 0;
+            color: white;
+        }
+
+        #messages {
+            padding: 10px;
+            flex-grow: 1;
+            overflow-y: auto;
+            background-color: #131c21;
+        }
+
+        .message-wrapper {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 10px;
+            border-radius: 10px;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .message.user {
+            background-color: #056162;
+            color: white;
+            align-self: flex-end;
+            text-align: right;
+            margin-left: auto;
+        }
+
+        .message.bot {
+            background-color: #202c33;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .timestamp {
+            text-align: center;
+            color: #999;
+            margin: 10px 0;
+        }
+
+        #input-area {
+            display: flex;
+            padding: 10px;
+            background-color: #1f2c34;
+        }
+
+        #input-area input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            margin-right: 10px;
+            background-color: #2a3942;
+            color: white;
+        }
+
+        #input-area button {
+            background-color: #056162;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: white;
+            cursor: pointer;
+        }
+
+       
+
+        .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        /* Media queries untuk tampilan landscape */
+        @media only screen and (max-width: 600px) {
+            #chatbox {
+                max-width: 100%;
+                height: 60vh;
+            }
+
+            #header h1 {
+                font-size: 18px;
+            }
+
+            #input-area input {
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            #input-area button {
+                width: 35px;
+                height: 35px;
+            }
+
+            .profile-pic {
+                width: 30px;
+                height: 30px;
+            }
+        }
+
+        @media only screen and (min-width: 601px) and (max-width: 1024px) {
+            #chatbox {
+                max-width: 80%;
+                height: 70vh;
+            }
+
+            #header h1 {
+                font-size: 20px;
+            }
+
+            #input-area input {
+                padding: 10px;
+                font-size: 16px;
+            }
+
+            #input-area button {
+                width: 40px;
+                height: 40px;
+            }
+
+            .profile-pic {
+                width: 35px;
+                height: 35px;
+            }
+        }
+
+        @media only screen and (min-width: 1025px) {
+            #chatbox {
+                max-width: 700px;
+                height: 80vh;
+            }
+
+            #header h1 {
+                font-size: 22px;
+            }
+
+            #input-area input {
+                padding: 12px;
+                font-size: 18px;
+            }
+
+            #input-area button {
+                width: 45px;
+                height: 45px;
+            }
+
+            .profile-pic {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="chatbox">
+        <div id="header">
+            <h1>Pawers Chatbot</h1>
+        </div>
+
+        <div id="messages">
+            <div class="message-wrapper">
+                <img src="" alt="Bot Profile" class="profile-pic"> <!-- Foto profil bot -->
+                <div class="message bot">Halo! Bagaimana saya bisa membantu Anda hari ini?</div>
+            </div>
+            <div class="message user">Halo, saya butuh informasi!</div>
+        </div>
+
+        <div id="input-area">
+            <input type="text" id="user-input" placeholder="Ketik pesan...">
+            <button onclick="sendMessage()">⏎</button>
+        </div>
+
+       
+    </div>
+
+    <script>
+        function sendMessage() {
+            const userInput = document.getElementById('user-input').value;
+            if (!userInput) return;
+
+            const messagesDiv = document.getElementById('messages');
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.classList.add('message', 'user');
+            userMessageDiv.textContent = userInput;
+            messagesDiv.appendChild(userMessageDiv);
+            document.getElementById('user-input').value = '';
+
+            // Mengirim pesan ke backend Flask
+            fetch('/get_response', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: userInput }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const botMessageWrapper = document.createElement('div');
+                botMessageWrapper.classList.add('message-wrapper');
+
+                const botProfilePic = document.createElement('img');
+                botProfilePic.src = ''; // Ganti dengan URL foto profil bot
+                botProfilePic.classList.add('profile-pic');
+
+                const botMessageDiv = document.createElement('div');
+                botMessageDiv.classList.add('message', 'bot');
+                botMessageDiv.textContent = data.response;
+
+                botMessageWrapper.appendChild(botProfilePic);
+                botMessageWrapper.appendChild(botMessageDiv);
+
+                messagesDiv.appendChild(botMessageWrapper);
+
+                // Scroll ke bagian bawah
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+                
+            });
+        }
+
+        
+    </script>
+
+</body>
+</html>
