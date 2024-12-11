@@ -53,5 +53,3 @@ The dataset consists of a collection of cat skin disease images obtained through
 
 - Expand the dataset to include more classes of cat skin diseases.
 - Explore advanced architectures and methodologies to further enhance accuracy.
-- Integrate the chatbot and CNN model into a mobile or web application for improved user experience.
-
